@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knote-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: knote
+  template:
+    metadata:
+      labels:
+        app: knote
+    spec:
+      containers:
+      - name: knote
+        image: knote:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGO_URI
+          value: mongodb://root:Qwerty654321@10.103.43.124:27017/knote-db
+        - name: JWT_SECRET
+          value: mysecret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: knote-service
+spec:
+  selector:
+    app: knote
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer
